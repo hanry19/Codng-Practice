@@ -22,16 +22,42 @@
     </insert>
 
     <update id="fileBoardUpdate" parameterType="board.mybatis.bean.FileBoardVO">
-        update FILE_BOARD set (title, content, writer) = (select
-        <if test="title != null">title=#{title}</if>
-        <if test="title != null and content != null">,</if>
-        <if test="content != null">content=#{content}</if>
-        from file_board where b_no=#{b_no})
-    </update>
 
+        update FILE_BOARD set
+        title=<if test="title != null">#{title}</if>,
+        content=<if test="content != null">#{content}</if>
+        where b_no=#{b_no}
+
+    </update>
     <delete id="fileBoardDelete" parameterType="int">
         DELETE FROM file_board WHERE b_no=#{b_no}
     </delete>
 
+    <!-- 파일 업로드 내용 추가 -->
+    <!--   selectkey 관련해션 여기 참고  :::  https://yookeun.github.io/java/2014/07/11/mybatis-selectkey/ -->
+    <insert id="fileInsert" parameterType="board.mybatis.bean.FileVO">
+        <selectKey keyProperty="b_no" resultType="int" order="BEFORE">
+            SELECT MAX(b_no)
+            FROM file_board
+        </selectKey>
+
+        insert into files (f_no, b_no, filename, fileoriginname, fileurl)
+        VALUES("sequence_FILES".nextval,#{b_no}, #{filename}, #{fileoriginname}, #{fileurl})
+
+    </insert>
+    <!-- 파일 업로드 및 다운로드 관련 추가 -->
+    <insert id="fileInsert" parameterType="com.example.demo.bean.FileVO">
+        <selectKey keyProperty="b_no" resultType="int" order="BEFORE">
+            SELECT MAX(b_no)
+            FROM file_board
+        </selectKey>
+
+        INSERT INTO file(b_no, filename, fileoriginname, fileurl)
+        VALUES(#{b_no}, #{filename}, #{fileoriginname}, #{fileurl})
+    </insert>
+
+    <select id="fileDetail" parameterType="int" resultType="com.example.demo.bean.FileVO">
+        SELECT * FROM file WHERE b_no=#{b_no}
+    </select>
 
 </mapper>

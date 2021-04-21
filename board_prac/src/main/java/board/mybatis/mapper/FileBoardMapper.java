@@ -2,6 +2,7 @@ package board.mybatis.mapper;
 
 
 import board.mybatis.bean.FileBoardVO;
+import board.mybatis.bean.FileVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public interface FileBoardMapper {
     int fileBoardUpdate(FileBoardVO fileBoard); //게시글 수정
     int fileBoardDelete(int bno); //게시글 삭제
 
+    //파일 업로드 및 다운로드 메서드 추가
+    int fileInsert(FileVO file);
+    FileVO fileDetail(int b_no);
 }
