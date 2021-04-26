@@ -24,7 +24,7 @@ public class MemberController {
     }
 
     @PostMapping("/user/signup")
-    public String execSignup(MemberDto) {
+    public String exeSignup(MemberDto memberDto) {
         memberService.joinUser(memberDto);
         return "redirect:/user/login";
     }

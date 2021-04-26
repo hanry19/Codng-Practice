@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<!--우선 view단에서 타임리프를 사용하겠다는 강력한 의지를 보여준다! 이 의지가 없으면, 타임리프 문법을 사용할 수 없다.-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>파일게시판-리스트페이</title>
+
+  <style type="text/css">
+    li {
+      list-style: none;
+      float: left;
+    }
+  </style>
+
+</head>
+
+<body>
+<div>
+
+  <div style="padding: 10px; text-align: center;">
+    <h1><a th:href="@{/}" style="text-decoration: none;">파일자료실</a></h1>
+  </div>
+
+  <!--/* 타임리프 관련 태그에 내용이 없어도 무적권 에러ㅇㅅㅇ */-->
+
+  <div>
+    <table>
+      <thead style="text-align: center;">
+      <tr>
+        <th style="text-align: center;">순서</th>
+        <th style="text-align: center;">작성자</th>
+        <th style="text-align: center;">제목</th>
+        <th style="text-align: center;">작성일</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!-- th:each 는 반복출력을 지원하다.
+         th:each="data : ${boardDtos}" 이렇게 하면, 모델에 포함된 boardDtos 컬렌션 데이터가
+         data 변수에 하나 씩 포함되고, 반복문 안에서 date를 이용하여 값을 깨낼 수 있다.
+         컬렉션의 수 만큼  [ <tr> </tr> ] 이 태그를 포함하여 생성된다.
+         -->
+      <!-- 리터럴 대체 [ |...| ]
+
+                                                                        get method-->
+      <tr th:each="data : ${boardDtos}" th:onclick="|location.href='@{/detail/{bno}(bno=${data.b_no})}'|">
+        <td th:text="${data.b_no}" style="cursor: pointer; text-align: center;"></td>
+        <td th:text="${data.writer}" style="cursor: pointer; text-align: center;"></td>
+        <td th:text="${data.title}" style="cursor: pointer; text-align: center;"></td>
+        <td th:text="${data.reg_date}" style="cursor: pointer; text-align: center;"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- 게시판 하단의 페이징 버튼 -->
+  <div>
+    <ul th:each="obj :${pageMaker}">
+      <li th:text="${pageMaker}"></li>
+      <li th:classappend="${obj.prePage ==0}?'disabled' ">
+        <a th:href="@{/(pageNum=${obj.startPage}-1,amount=${obj.cri.amount})}"> &laquo;&laquo;</a>
+      </li>
+
+      <li th:each="idx,iterStat : ${#numbers.sequence(obj.startPage,obj.endPage)}"  th:classappend="${obj.cri.pageNum} == ${idx} ? active : null">
+        <a th:href="@{/(pageNum=${idx},amount=${obj.cri.amount})}" th:text="${idx}"></a>
+      </li>
+
+      <li th:if="${obj.next} == true and ${obj.endPage > 0}">
+        <a th:href="@{/(pageNum=${obj.endPage}+1,amount=${obj.cri.amount})}">&raquo;&raquo;</a>
+      </li>
+
+    </ul>
+
+  </div>
+
+  <div style="text-align: right;">
+    <button onclick="location.href='/write'">글작성</button>
+  </div>
+
+  <br/><br/><br/>
+</div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.boardPrac2.mapper.BoardMapper">
+
+
+    <select id="getListWithPaging" resultType="com.example.boardPrac2.dto.BoardDto">
+  <![CDATA[
+        select * from (
+                          select /* index_desc(file_board pk_board)   */ rownum rn, b_no, title, WRITER, reg_date
+                          from FILE_BOARD
+                          where B_NO > 0
+                            and ROWNUM <= (#{pageNum} * #{amount})
+                      )
+        where rn > (#{pageNum}-1) * #{amount}
+        ]]>
+    </select>
+    <select id="countArticles" resultType="int">
+            <![CDATA[
+        SELECT
+            COUNT(b_no)
+        FROM FILE_BOARD
+        WHERE b_no > 0
+        ]]>
+    </select>
+
+
+    <select id="getFileBoardList" resultType="com.example.boardPrac2.dto.BoardDto">
+        SELECT * FROM file_board
+        ORDER BY b_no
+    </select>
+
+    <select id="fileBoardDetail" parameterType="int" resultType="com.example.boardPrac2.dto.BoardDto">
+        SELECT * FROM file_board
+        WHERE b_no=#{b_no}
+    </select>
+
+    <insert id="fileBoardInsert" parameterType="com.example.boardPrac2.dto.BoardDto" keyProperty="b_no">
+        INSERT INTO file_board (b_no, title, content, writer, reg_date)
+        VALUES(AUTO_INCREASE.nextval,#{title}, #{content}, #{writer},default)
+
+    </insert>
+
+    <update id="fileBoardUpdate" parameterType="com.example.boardPrac2.dto.BoardDto">
+
+        update FILE_BOARD set
+        title=<if test="title != null">#{title}</if>,
+        content=<if test="content != null">#{content}</if>
+        where b_no=#{b_no}
+
+    </update>
+    <delete id="fileBoardDelete" parameterType="int">
+        DELETE FROM file_board WHERE b_no=#{b_no}
+    </delete>
+
+<!--    &lt;!&ndash; 파일 업로드 내용 추가 &ndash;&gt;-->
+<!--    &lt;!&ndash;   selectkey 관련해션 여기 참고  :::  https://yookeun.github.io/java/2014/07/11/mybatis-selectkey/ &ndash;&gt;-->
+<!--    <insert id="fileInsert" parameterType="board.mybatis.bean.FileVO">-->
+<!--        <selectKey keyProperty="b_no" resultType="int" order="BEFORE">-->
+<!--            SELECT MAX(b_no)-->
+<!--            FROM file_board-->
+<!--        </selectKey>-->
+
+<!--        insert into files (f_no, b_no, filename, fileoriginname, fileurl)-->
+<!--        VALUES("sequence_FILES".nextval,#{b_no}, #{filename}, #{fileoriginname}, #{fileurl})-->
+
+<!--    </insert>-->
+<!--    &lt;!&ndash; 파일 업로드 및 다운로드 관련 추가 &ndash;&gt;-->
+<!--    <insert id="fileInsert" parameterType="com.example.demo.bean.FileVO">-->
+<!--        <selectKey keyProperty="b_no" resultType="int" order="BEFORE">-->
+<!--            SELECT MAX(b_no)-->
+<!--            FROM file_board-->
+<!--        </selectKey>-->
+
+<!--        INSERT INTO file(b_no, filename, fileoriginname, fileurl)-->
+<!--        VALUES(#{b_no}, #{filename}, #{fileoriginname}, #{fileurl})-->
+<!--    </insert>-->
+
+<!--    <select id="fileDetail" parameterType="int" resultType="com.example.demo.bean.FileVO">-->
+<!--        SELECT * FROM file WHERE b_no=#{b_no}-->
+<!--    </select>-->
+
+</mapper>
