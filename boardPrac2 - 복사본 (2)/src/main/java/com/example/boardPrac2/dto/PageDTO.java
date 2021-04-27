@@ -10,8 +10,6 @@ public class PageDTO {
     private int startPage, endPage;
     private boolean prev, next;
 
-    private int prePage;
-
     private int total;
     private Criteria cri;
 
@@ -33,7 +31,7 @@ public class PageDTO {
 
         this.next = this.endPage < realEnd;
 
-        this.prePage = cri.getPageNum() - 1;
+
 
     }
 }

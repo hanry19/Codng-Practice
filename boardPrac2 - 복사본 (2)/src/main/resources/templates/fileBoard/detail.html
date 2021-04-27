@@ -22,9 +22,9 @@
             <!--  th:object=${boardDto}해당 form문 에  사용될 객체를 지정한다. 객체로 받아진다.
                   th:action="@{/}
                   -->       <!--="@{/fileBoard/list}"-->
-            <form role="form" th:object=${boardDto}
-                  th:action  method="post">
+            <form role="form" th:object=${boardDto} th:action  method="post">
                 <div>
+
                     <label style="font-weight: bolder;">제목</label>
 
 <!--  th:text =내용 변경. 내용의값을 변경한다. 태그안에 들어가는 텍스트 값이다.

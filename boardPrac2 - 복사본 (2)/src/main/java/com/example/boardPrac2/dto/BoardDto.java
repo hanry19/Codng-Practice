@@ -18,4 +18,6 @@ public class BoardDto {
     private String content;
     private String writer;
     private Date reg_date;
+
+
 }

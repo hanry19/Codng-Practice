@@ -5,11 +5,10 @@
 
 <mapper namespace="com.example.boardPrac2.mapper.BoardMapper">
 
-
     <select id="getListWithPaging" resultType="com.example.boardPrac2.dto.BoardDto">
   <![CDATA[
         select * from (
-                          select /* index_desc(file_board pk_board)   */ rownum rn, b_no, title, WRITER, reg_date
+                          select /* index_asr(file_board pk_board)   */ rownum rn, b_no, title, WRITER, reg_date
                           from FILE_BOARD
                           where B_NO > 0
                             and ROWNUM <= (#{pageNum} * #{amount})
@@ -30,6 +29,7 @@
     <select id="getFileBoardList" resultType="com.example.boardPrac2.dto.BoardDto">
         SELECT * FROM file_board
         ORDER BY b_no
+
     </select>
 
     <select id="fileBoardDetail" parameterType="int" resultType="com.example.boardPrac2.dto.BoardDto">

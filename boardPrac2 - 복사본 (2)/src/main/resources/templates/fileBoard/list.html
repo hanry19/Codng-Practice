@@ -57,8 +57,8 @@
   <!-- 게시판 하단의 페이징 버튼 -->
   <div>
     <ul th:each="obj :${pageMaker}">
-      <li th:text="${pageMaker}"></li>
-      <li th:classappend="${obj.prePage ==0}?'disabled' ">
+<!--      <li th:text="${pageMaker}"></li>-->
+      <li th:if="${obj.prev} == true">
         <a th:href="@{/(pageNum=${obj.startPage}-1,amount=${obj.cri.amount})}"> &laquo;&laquo;</a>
       </li>
 

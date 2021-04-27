@@ -20,6 +20,7 @@ public class BoardController {
 
     // 스프링 빈 컨테테이너에 BoardService 클래스를 주입하여 하나의 객체를 공유하는 형식으로 사용한다 => single tone 방식
     // 스프링 프레임워크는 기존의 싱글톤 방식의 단점을 보완하여 사용할 수 있고, 그로인해 불필요한 객체 생성을 방지한다.
+
     @Autowired
     BoardService boardService;
 
@@ -35,47 +36,6 @@ public class BoardController {
         model.addAttribute("pageMaker", new PageDTO(cri,  boardService.countArticles()));
         return "fileBoard/list";
     }
-
-//    @RequestMapping("/")
-//    private String BoardList(Model model, HttpServletRequest request) {
-//        List<BoardDto> boardDtos = new ArrayList<>();
-//
-//        // boardDtos(ArrayList) 는 서비스인터페이스의 fileBoardList를 불러온다.
-//        // boardService 는 인터페이스로 해당 인터페이스를 구현하는 클래스의 메서드의 getFileBoaradList를 실행시킨다.
-//        // 실행한 메서드는 BoardMapper 인터페이스의 getFileBoardList를 반환하며
-//        // 이 mapper는 mapper.xml과 매핑 되어 잇어, sql문을 실행시켜 값을 가져온다.
-//
-//            /*     @Override
-//                      public List<BoardDto> getFileBoardList() {
-//                      return boardMapper.getFileBoardList();
-//                 }*/
-//
-//        // 그러니까 ArrayList인 boardDtos는 db에서
-//        // 'getFileBoardList()"라는 ID를 가진 녀석의 쿼리문을 실행시킨 값이다!
-//        boardDtos = boardService.getFileBoardList();
-//
-//        // 그리고 db에서 가져온 값을 model의 속성에 "boardDtos" 라는 이름으로 추가
-//        // 이 모델은 view단으로 연결이 된다!
-//        model.addAttribute("boardDtos", boardDtos);
-//
-//        // 그리고 논리적 주소를 반환한다.
-//        // 이 의미는 "/" 로 호출이 오면 "fileBoarad/List"로 연결해주는 것이다.
-//        return "fileBoard/list";
-//    }
-
-//    @PostMapping("/")
-//    private String BoardListPost(Model model, HttpServletRequest request) {
-//        List<BoardDto> boardDtos = new ArrayList<>();
-//        boardDtos = boardService.getFileBoardList();
-//        model.addAttribute("boardDtos", boardDtos);
-//        return "fileBoard/list";
-//    }
-
-
-// 클라이언트가 게시판에서 디테일한 정보를 요청할 때 전달되는 url은 "/detail/b_no" 이다.
-//    여기서 b_no라는 것은 쿼리문으로 게시글 번호마다 다르게 측정될 것이다
-//    그리고 getMapping을 하는 이유 역시 서버에 데이터를 요청하는 것이기 때문이다.
-//    get /post 같은 rest API도 추후 정리하여 올리겠다.
 
     @GetMapping("/detail/{b_no}")
 
