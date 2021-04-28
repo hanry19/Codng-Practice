@@ -3,6 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
+
+<!--여기 잇는 이 com.블라블라-->
 <mapper namespace="com.example.boardPrac2.mapper.BoardMapper">
 
     <sql id="criteria">
