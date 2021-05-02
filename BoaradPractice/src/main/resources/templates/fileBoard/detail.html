@@ -22,7 +22,7 @@
             <!--  th:object=${boardDto}해당 form문 에  사용될 객체를 지정한다. 객체로 받아진다.
                   th:action="@{/}
                   -->       <!--="@{/fileBoard/list}"-->
-            <form role="form" th:object=${boardDto} th:action  method="post">
+            <form role="form" th:object=${detail} th:action  method="post">
                 <div>
 
                     <label style="font-weight: bolder;">제목</label>
@@ -44,10 +44,12 @@
                 <div>
                     <label style="font-weight: bolder;">첨부파일</label>
                     <p>
-                        <a th:if="${file}" th:href="@{/fileBoard/fileDown/{bno}(bno=${file.b_no})}">
-                            [[${file.fileoriginname}]]
+                        <a th:if="${files}" th:href="@{/fileBoard/fileDown/{bno}(bno=${files.b_no})}">
+                            [[${files.fileOriginName}]]
+
                         </a>
                     </p>
+
                 </div>
                 <div>
                     <label for="" style="font-weight: bolder;">내용</label>

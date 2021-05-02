@@ -3,16 +3,26 @@ package com.example.boardPrac2.controller;
 
 import com.example.boardPrac2.dto.BoardDto;
 import com.example.boardPrac2.dto.Criteria;
+import com.example.boardPrac2.dto.FileVO;
 import com.example.boardPrac2.dto.PageDTO;
 import com.example.boardPrac2.service.BoardService;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.spring5.util.FieldUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Controller
@@ -25,24 +35,23 @@ public class BoardController {
     BoardService boardService;
 
     @RequestMapping("/")
-    private String BoardList(Criteria cri, Model model, HttpServletRequest request) {
+    private String BoardList(Criteria cri, Model model) {
         List<BoardDto> boardDtos = new ArrayList<>();
 
         boardDtos = boardService.getFileBoardList(cri);
 
         model.addAttribute("boardDtos", boardDtos);
-        model.addAttribute("pageMaker", new PageDTO(cri,  boardService.getTotal(cri)));
+        model.addAttribute("pageMaker", new PageDTO(cri, boardService.getTotal(cri)));
 
 
         return "fileBoard/list";
     }
 
-    @GetMapping("/detail/{b_no}")
-
 //    @PathVariable은 경로 변수이다.
 //    @RequsrtMapping은 URL 경로를 템플릿 화 할 수 있는데, @PathVariable 을 사용하면
 //    매칭되는 부분을 편리하게 조회할 수 있다. 또한 이름과 파라미터 이름이 같으면 생략이 가능하다. (다중 적용가능)
 
+    @RequestMapping("/detail/{b_no}")
     private String boardDetail(@PathVariable("b_no") int b_no, Model model) {
 
         // 클라이언트가 선택한 url의 쿼리문 중 "b_no" 에 해당하는 값의 이름을 파라미터와 동일하게 하여 가져온다.
@@ -50,11 +59,16 @@ public class BoardController {
         // 이 역시 로직을 위해 service의 detail메서드로 전달하고,
         // 데이터베이스로부터 쿼리문을 실행시킨 값을 받아 리턴 받는다.
         // 그리고 "fileBoard/detail" 이라는 논리적 주소를 리턴한다.
-
         model.addAttribute("detail", boardService.fileBoardDetail(b_no));
 
-        return "fileBoard/detail";
+/* 2021.04.29 파일 다운 로드 로직 추가 */
 
+        if (boardService.fileDown(b_no) == null) {
+            return "fileBoard/detail";
+        } else {
+            model.addAttribute("files", boardService.fileDown(b_no));
+            return "fileBoard/detail";
+        }
     }
 
     // 여기서 postMapping인 이유는 detail 페이지에서 수정 버튼을 눌리면 해당 페이지의 정보를 가져온 뒤
@@ -90,64 +104,76 @@ public class BoardController {
         return "redirect:/";
     }
 
+/*
+2021.04.29 첨부파일 삽입 기능 추가 구현
+
+
+
+*/
     @GetMapping("/write")
     private String fileWrite(@ModelAttribute BoardDto boardDto) {
         return "fileBoard/insert";
     }
 
-    @PostMapping("/writeSub")
-    private String fileWriteSub(@ModelAttribute BoardDto boardDto) {
-        boardService.fileBoardInsert(boardDto);
-        return "redirect:/";
+    //    파일 업로드
+/*    @PostMapping("/uploadFile")
+    private String fileUpload(@ModelAttribute FileVO fileVO,
+                              @RequestParam MultipartFile files)
+            throws IllegalAccessException, IOException,Exception{
+
+        File file = new File("C:/Temp/");
+        if(file.exists()) {
+            file.mkdir();
+        }
+        String fileName = "C:/Temp/" + UUID.randomUUID() + files.getOriginalFilename();
+        File file1 = new File(fileName);
+        files.transferTo(file1);
+
+        return "/";
+    }*/
+    @RequestMapping("/writeSub")
+    private String fileBoardInsertProc(@ModelAttribute BoardDto boardDto, @RequestPart MultipartFile
+            files, HttpServletRequest request) throws IllegalStateException, IOException, Exception {
+
+        if(files.isEmpty()) {
+            boardService.fileBoardInsert(boardDto);
+
+        } else {
+            String fileName = files.getOriginalFilename(); // 사용자 컴에 저장된 파일명 그대로
+            //확장자
+            String fileNameExtension = FilenameUtils.getExtension(fileName).toLowerCase();
+            File destinationFile; // DB에 저장할 파일 고유명
+            String destinationFileName;
+            //절대경로 설정 안해주면 지 맘대로 들어가버려서 절대경로 박아주었습니다.
+            String fileUrl = "D:\\HSJ\\temp\\";
+
+            do { //우선 실행 후
+                //고유명 생성
+//                destinationFileName = RandomStringUtils.randomAlphanumeric(32) + "." + fileNameExtension;
+                destinationFileName = UUID.randomUUID() + "." + fileNameExtension;      //내가 수정한거
+                destinationFile = new File(fileUrl + destinationFileName); //합쳐주기
+            } while (destinationFile.exists());
+
+            destinationFile.getParentFile().mkdirs(); //디렉토리
+            files.transferTo(destinationFile);
+
+            boardService.fileBoardInsert(boardDto);
+
+
+
+            FileVO file = new FileVO();
+            file.setB_no(boardDto.getB_no());
+            file.setFileName(destinationFileName);
+            file.setFileOriginName(fileName);
+            file.setFileUrl(fileUrl);
+
+            boardService.fileInsert(file);
+        }
+
+        return "forward:/"; //객체 재사용
     }
 
-/*
-    @RequestMapping("/")
-    private String fileBoardList(Model model, HttpServletRequest request) {
 
-        List<BoardDto> List = new ArrayList<>();
-        List = boardService.getFileBoardList();
-        model.addAttribute("List", List);
-        return "/fileBoard/list";
-    }
 
-    @RequestMapping("/detail/{b_no}")
-    private String fileBoardDetail(@PathVariable("b_no") int b_no, Model model) {
-        model.addAttribute("detail", boardService.fileBoardDetail(b_no));
-        return "fileBoard/detail";
-    }
-
-    @RequestMapping("/insert")
-    private String fileBoardInsertForm(@ModelAttribute BoardDto board) {
-        return "fileBoard/insert";
-    }
-
-    @RequestMapping("/insertProc")
-    private String fileBoardInsertProc(@ModelAttribute BoardDto board, HttpServletRequest request) {
-        boardService.fileBoardInsert(board);
-        return "forward:/fileBoard/list"; //객체 재사용
-    }
-
-    @RequestMapping("/update/{b_no}")
-    private String fileBoardUpdateForm(@PathVariable("b_no") int b_no, Model model) {
-        model.addAttribute("detail", boardService.fileBoardDetail(b_no));
-        return "fileBoard/update";
-    }
-
-    @RequestMapping("/updateProc")
-    private String fileBoardUpdateProc(@ModelAttribute BoardDto board) {
-
-        boardService.fileBoardUpdate(board);
-        int bno = board.getB_no();
-        String b_no = Integer.toString(bno);
-        return "redirect:/fileBoard/detail/"+b_no;
-    }
-
-    @RequestMapping("/delete/{b_no}")
-    private String fileBoardDelete(@PathVariable("b_no") int b_no) {
-        boardService.fileBoardDelete(b_no);
-        return "redirect:/fileBoard/list";
-    }
-*/
 
 }

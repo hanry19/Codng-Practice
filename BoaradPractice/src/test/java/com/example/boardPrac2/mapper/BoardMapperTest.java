@@ -3,9 +3,12 @@ package com.example.boardPrac2.mapper;
 //import com.example.boardPrac2.controller.BoardController;
 import com.example.boardPrac2.dto.BoardDto;
 import com.example.boardPrac2.dto.Criteria;
+import com.example.boardPrac2.dto.FileVO;
 import com.example.boardPrac2.dto.PageDTO;
 import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import org.apache.juli.logging.Log;
+import org.assertj.core.api.Assert;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +36,6 @@ class BoardMapperTest {
 
     @Autowired
     BoardMapper boardMapper;
-
 
 
     @Test
@@ -84,6 +86,8 @@ class BoardMapperTest {
 
         Criteria cri = new Criteria();
         List<BoardDto> list = boardMapper.getListWithPaging(cri);
+
+        System.out.println("list = " + list);
     }
 
     @Test
@@ -110,6 +114,7 @@ class BoardMapperTest {
         List<BoardDto> list = boardMapper.searchTest(outer);
 
     }
+
     @Test
     public void testSearchPaging() {
 
@@ -121,8 +126,19 @@ class BoardMapperTest {
     }
 
 
+    @Test
+    @DisplayName("uploadTest")
+    public void uploadTest() {
+        FileVO fileVO = new FileVO();
 
+        fileVO.setB_no(109);
+        fileVO.setFileName("ASD");
+        fileVO.setFileOriginName("test");
+        fileVO.setFileUrl("www.naver.com");
 
+        boardMapper.fileInsert(fileVO);
 
+        System.out.println("fileVO = " + fileVO);
 
+    }
 }

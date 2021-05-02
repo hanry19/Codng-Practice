@@ -43,11 +43,14 @@
       <!-- 리터럴 대체 [ |...| ]
 
                                                                         get method-->
+      <li th:text="${pageMaker}"></li>
+
       <tr th:each="data : ${boardDtos}" th:onclick="|location.href='@{/detail/{bno}(bno=${data.b_no})}'|">
         <td th:text="${data.b_no}" style="cursor: pointer; text-align: center;"></td>
         <td th:text="${data.writer}" style="cursor: pointer; text-align: center;"></td>
         <td th:text="${data.title}" style="cursor: pointer; text-align: center;"></td>
         <td th:text="${data.reg_date}" style="cursor: pointer; text-align: center;"></td>
+
       </tr>
       </tbody>
     </table>
@@ -78,7 +81,7 @@
   <!-- 게시판 하단의 페이징 버튼 -->
   <div>
     <ul th:each="obj :${pageMaker}">
-<!--      <li th:text="${pageMaker}"></li>-->
+      <li th:text="${pageMaker}"></li>
       <li th:if="${obj.prev} == true">
         <a th:href="@{/(pageNum=${obj.startPage}-1,amount=${obj.cri.amount})}"> &laquo;&laquo;</a>
       </li>
@@ -96,7 +99,7 @@
   </div>
 
   <div style="text-align: right;">
-    <button onclick="location.href='/write'">글작성</button>
+    <button th:onclick="|location.href='@{/write}'|">글작성</button>
   </div>
 
   <br/><br/><br/>

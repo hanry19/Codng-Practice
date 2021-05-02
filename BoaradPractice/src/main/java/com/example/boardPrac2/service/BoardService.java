@@ -3,6 +3,7 @@ package com.example.boardPrac2.service;
 
 import com.example.boardPrac2.dto.BoardDto;
 import com.example.boardPrac2.dto.Criteria;
+import com.example.boardPrac2.dto.FileVO;
 
 import java.util.List;
 
@@ -17,5 +18,11 @@ public interface BoardService {
     List<BoardDto> getFileBoardList(Criteria cri);
 
     int getTotal(Criteria cri);
+
+    //파일 업로드 메서드
+    int fileInsert (FileVO file);
+
+    // 파일 다운로드
+    FileVO fileDown(int b_no);
 
 }

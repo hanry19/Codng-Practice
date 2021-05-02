@@ -56,8 +56,7 @@ public class ReplyController {
     @DeleteMapping(value = "/{rno}")
     public ResponseEntity<String> remove(@PathVariable("rno") Long rno) {
 
-
-        return new ResponseEntity<>("sucess", HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     //댓글 수정
@@ -65,6 +64,6 @@ public class ReplyController {
     public ResponseEntity<String> modify(@RequestBody ReplyVO vo) {
 
         service.modify(vo);
-        return new ResponseEntity<>("sucess", HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 }
